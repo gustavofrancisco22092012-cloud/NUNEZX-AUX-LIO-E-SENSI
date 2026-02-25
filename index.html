@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR7 Sensibilidade Pro</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top, #1a0000, #000);
+    color:white;
+    text-align:center;
+}
+
+h1{
+    font-size:28px;
+    color:#ff0000;
+    text-shadow:0 0 15px red;
+}
+
+.container{
+    padding:20px;
+}
+
+select,input,button{
+    padding:12px;
+    margin:10px;
+    border-radius:10px;
+    border:none;
+    font-size:16px;
+}
+
+select,input{
+    width:250px;
+}
+
+button{
+    background:linear-gradient(45deg,#ff0000,#990000);
+    color:white;
+    cursor:pointer;
+    box-shadow:0 0 15px red;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.card{
+    background:#111;
+    margin-top:20px;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 0 20px red;
+}
+
+.hidden{
+    display:none;
+}
+
+.whatsapp{
+    background:#25D366;
+    box-shadow:0 0 15px #25D366;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>HR7 Sensibilidade Pro</h1>
+<p>Configurações recomendadas personalizadas</p>
+<p><strong>Valor único: R$3,50</strong></p>
+
+<select id="marca"></select>
+<br>
+<select id="modelo"></select>
+<br>
+
+<button onclick="gerarPagamento()">Pagar via Pix</button>
+
+<div id="pagamento" class="card hidden"></div>
+<div id="resultado" class="card hidden"></div>
+
+<button class="whatsapp" onclick="abrirWhats()">Falar no WhatsApp</button>
+
+<div style="margin-top:30px;font-size:12px;color:#aaa;">
+⚠️ Configurações recomendadas. Resultados podem variar conforme estilo de jogo.
+</div>
+
+</div>
+
+<script>
+
+// ===== BANCO DE DADOS COM CENTENAS DE MODELOS POPULARES =====
+
+const banco = {
+Samsung:["Galaxy A10","Galaxy A11","Galaxy A12","Galaxy A13","Galaxy A14","Galaxy A20","Galaxy A21","Galaxy A22","Galaxy A30","Galaxy A31","Galaxy A32","Galaxy A50","Galaxy A51","Galaxy A52","Galaxy A70","Galaxy A71","Galaxy S8","Galaxy S9","Galaxy S10","Galaxy S20","Galaxy S21","Galaxy S22"],
+Xiaomi:["Redmi 8","Redmi 9","Redmi 10","Redmi 12","Redmi Note 7","Redmi Note 8","Redmi Note 9","Redmi Note 10","Redmi Note 11","Redmi Note 12","Poco X3","Poco X4","Poco F3","Poco F4"],
+Motorola:["Moto G7","Moto G8","Moto G9","Moto G10","Moto G20","Moto G30","Moto G50","Moto G60","Moto Edge 20","Moto Edge 30"],
+iPhone:["iPhone 7","iPhone 8","iPhone X","iPhone XR","iPhone 11","iPhone 12","iPhone 13","iPhone 14"],
+Realme:["Realme C11","Realme C21","Realme C25","Realme 7","Realme 8","Realme 9"],
+Asus:["Zenfone 5","Zenfone 6","Zenfone 7","ROG Phone 3","ROG Phone 5"],
+Poco:["Poco M3","Poco M4","Poco X3","Poco X5","Poco F3","Poco F5"]
+};
+
+// ===== CARREGAR MARCAS =====
+
+const marcaSelect = document.getElementById("marca");
+const modeloSelect = document.getElementById("modelo");
+
+marcaSelect.innerHTML = "<option>Escolha a Marca</option>";
+
+for(let marca in banco){
+    marcaSelect.innerHTML += `<option value="${marca}">${marca}</option>`;
+}
+
+marcaSelect.addEventListener("change", function(){
+    let modelos = banco[this.value];
+    modeloSelect.innerHTML="";
+    modelos.forEach(modelo=>{
+        modeloSelect.innerHTML += `<option>${modelo}</option>`;
+    });
+});
+
+// ===== CLASSIFICAÇÃO AUTOMÁTICA =====
+
+function classificar(modelo){
+
+if(modelo.includes("A1") || modelo.includes("C11") || modelo.includes("G7"))
+return "entrada";
+
+if(modelo.includes("A3") || modelo.includes("Note") || modelo.includes("G20"))
+return "intermediario";
+
+if(modelo.includes("S") || modelo.includes("Edge") || modelo.includes("X3"))
+return "avancado";
+
+return "premium";
+}
+
+function gerarSensibilidade(tipo){
+
+const dados={
+entrada:{g:186,r:180,x2:168,x4:148,a:118,d:420},
+intermediario:{g:194,r:188,x2:176,x4:158,a:132,d:480},
+avancado:{g:200,r:195,x2:183,x4:166,a:142,d:520},
+premium:{g:200,r:198,x2:188,x4:170,a:148,d:560}
+};
+
+return dados[tipo];
+}
+
+// ===== PIX MANUAL =====
+
+function gerarPagamento(){
+
+let modelo = modeloSelect.value;
+
+document.getElementById("pagamento").innerHTML=`
+<h2>Pagamento via Pix</h2>
+<p><strong>Valor:</strong> R$3,50</p>
+<p><strong>Chave Pix:</strong> 66981124524</p>
+<button onclick="copiarPix()">Copiar Chave Pix</button>
+<br><br>
+<p>Após pagar, envie comprovante via WhatsApp.</p>
+`;
+
+document.getElementById("pagamento").classList.remove("hidden");
+}
+
+function copiarPix(){
+navigator.clipboard.writeText("66981124524");
+alert("Chave Pix copiada!");
+}
+
+// ===== LIBERAÇÃO MANUAL =====
+
+function liberar(){
+
+let modelo = modeloSelect.value;
+let tipo = classificar(modelo);
+let s = gerarSensibilidade(tipo);
+
+document.getElementById("resultado").innerHTML=`
+<h2>Sensibilidade Recomendada HR7</h2>
+<p><strong>${modelo}</strong></p>
+<hr>
+<p>Geral: ${s.g}</p>
+<p>Red Dot: ${s.r}</p>
+<p>Mira 2x: ${s.x2}</p>
+<p>Mira 4x: ${s.x4}</p>
+<p>AWM: ${s.a}</p>
+<p>DPI Recomendada: ${s.d}</p>
+`;
+
+document.getElementById("resultado").classList.remove("hidden");
+}
+
+// ===== WHATSAPP =====
+
+function abrirWhats(){
+window.open("https://wa.me/5566981124524");
+}
+
+// botão secreto admin
+document.addEventListener("keydown", function(e){
+if(e.ctrlKey && e.key === "9"){
+liberar();
+}
+});
+
+</script>
+
+</body>
+</html><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet"><div class="logo">HR7</div><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet"><svg width="500" height="150" viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .text-main {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 90px;
+      font-weight: 800;
+      fill: #FF0033;
+    }
+    .text-sub {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 20px;
+      fill: #00FF88;
+      letter-spacing: 4px;
+    }
+  </style>
+
+  <rect width="500" height="150" fill="#0B0B0F"/>
+  <text x="50" y="100" class="text-main">HR7</text>
+  <line x1="50" y1="110" x2="350" y2="110" stroke="#00FF88" stroke-width="4"/>
+  <text x="50" y="135" class="text-sub">PRECISION SYSTEM</text>
+</svg><header class="hr7-header">
+  <h1 class="logo">HR7</h1>
+  <p class="slogan">Precision System</p>
+</header><!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HR7 | NUNEZ</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+margin:0;
+background:#0B0B0F;
+font-family:'Rajdhani',sans-serif;
+overflow:hidden;
+}
+
+.banner{
+width:100%;
+height:600px;
+background:linear-gradient(120deg,#0B0B0F,#1A1A22);
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+position:relative;
+border-top:3px solid #00FF88;
+border-bottom:3px solid #FF0033;
+}
+
+/* Efeito linhas tech */
+.banner::before{
+content:"";
+position:absolute;
+width:200%;
+height:2px;
+background:#FF0033;
+top:40%;
+left:-50%;
+animation:moveLine 6s linear infinite;
+opacity:0.3;
+}
+
+@keyframes moveLine{
+0%{transform:translateX(0);}
+100%{transform:translateX(50%);}
+}
+
+.logo{
+font-family:'Orbitron',sans-serif;
+font-size:110px;
+color:#FF0033;
+text-shadow:0 0 30px #FF0033, 0 0 60px #FF0033;
+margin:0;
+letter-spacing:8px;
+}
+
+.system{
+color:#00FF88;
+font-size:28px;
+letter-spacing:6px;
+margin-top:-10px;
+}
+
+.name{
+margin-top:25px;
+font-size:36px;
+color:white;
+letter-spacing:10px;
+font-weight:600;
+position:relative;
+}
+
+.name::after{
+content:"";
+display:block;
+width:150px;
+height:3px;
+background:#00FF88;
+margin:10px auto 0;
+box-shadow:0 0 15px #00FF88;
+}
+
+.slogan{
+margin-top:20px;
+font-size:18px;
+color:#FFFFFF;
+opacity:0.8;
+letter-spacing:3px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="banner">
+<h1 class="logo">HR7</h1>
+<div class="system">PRECISION SYSTEM</div>
+<div class="name">NUNEZ</div>
+<div class="slogan">⚡ Precisão é Resultado</div>
+</div>
+
+</body>
+</html>
